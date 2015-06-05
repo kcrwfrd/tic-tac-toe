@@ -1,0 +1,22 @@
+{
+  "name": "tic-tac-toe",
+  "version": "0.0.0",
+  "description": "An automated game of tic-tac-toe between two computers.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/kvcrawford/tic-tac-toe.git"
+  },
+  "author": "Kevin Crawford",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kvcrawford/tic-tac-toe/issues"
+  },
+  "homepage": "https://github.com/kvcrawford/tic-tac-toe#readme",
+  "devDependencies": {
+    "jasmine-node": "^1.14.5"
+  }
+}
