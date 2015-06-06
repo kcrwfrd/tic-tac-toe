@@ -59,14 +59,6 @@ describe 'Game:', ->
 
         expect(game.getResult()).toBe 'draw'
 
-        game.board = [
-          ['x', 'o', null]
-          ['o', 'o', 'x']
-          ['x', 'x', null]
-        ]
-
-        expect(game.getResult()).toBe 'draw'
-
     describe 'Wins:', ->
       it 'Should return the result of a diagonal line.', ->
         game.board = [
@@ -105,13 +97,27 @@ describe 'Game:', ->
         expect(game.getResult()).toBe 'o'
 
     describe 'Unfinished:', ->
-      it 'Should return undefined for an unfinished game.', ->
+      it 'Should return null if the board is empty.', ->
+        game.board = [
+          [null, null, null]
+          [null, null, null]
+          [null, null, null]
+        ]
+
+        expect(game.getResult()).toBe null
+
+      it 'Should return null for an unfinished game.', ->
+        game.board = [
+          ['o', 'x', 'o']
+          [null, 'x', 'x']
+          ['x', 'o', null]
+        ]
+
+        expect(game.getResult()).toBe null
+
+      it 'Should return null for an unfinished game.', ->
         unfinished_boards = [
           [
-            [null, null, null]
-            [null, null, null]
-            [null, null, null]
-          ], [
             ['o', 'x', 'o']
             [null, 'x', null]
             ['x', 'o', null]
@@ -119,10 +125,6 @@ describe 'Game:', ->
             ['x', null, null]
             ['o', null, null]
             ['x', null, 'o']
-          ], [
-            ['o', 'x', 'o']
-            [null, 'x', 'x']
-            ['x', 'o', null]
           ]
         ]
 
