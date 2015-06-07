@@ -15,16 +15,14 @@ lines = [
 ]
 
 class Game
-  constructor: ->
+  constructor: (@player_a, @player_b) ->
     @board = [
       [null, null, null]
       [null, null, null]
       [null, null, null]
     ]
 
-    @current_player = 'x'
-
-    @play()
+    @current_player = @player_a
 
   ###
   @name eachSpace
@@ -127,13 +125,16 @@ class Game
     return 'draw' unless has_unblocked_line
     return null
 
-  markSpace: ([row, column], marker) ->
-    @board[row][column] = marker
+  markSpace: ([row, column], player) ->
+    throw Error "It's not #{player.marker}'s turn!" unless player is @current_player
+
+    @board[row][column] = player.marker
+
+    @current_player =
+      if @current_player is @player_a then @player_b else @player_a
 
   nextMove: ->
-    @markSpace @getMove(), @current_player
-
-    @current_player = if @current_player is 'x' then 'o' else 'x'
+    @current_player.move @
 
   play: ->
     while not @getResult()?
