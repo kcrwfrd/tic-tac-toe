@@ -100,4 +100,7 @@ class Game
     return 'draw' unless has_unblocked_line
     return null
 
+  markSpace: ([row, column], marker) ->
+    @board[row][column] = marker
+
 module.exports = Game
