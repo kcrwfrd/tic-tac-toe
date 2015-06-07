@@ -26,16 +26,33 @@ class Game
 
     @play()
 
-  getEmptySpaces: ->
-    spaces = []
+  ###
+  @name eachSpace
+  @description
+  Iterates over each space of the board
 
+  @param {Function} callback
+
+  @callback callback
+  @param {[Row, Column]} coordinates
+  @param {String|null} value
+  ###
+
+  eachSpace: (callback) ->
     for row, row_index in @board
       for column, column_index in row
-        space = [row_index, column_index]
+        coordinates = [row_index, column_index]
+        value = @getValue coordinates
 
-        spaces.push space unless @getValue(space)?
+        callback? coordinates, value
 
-    return spaces
+  getEmptySpaces: ->
+    empty_spaces = []
+
+    @eachSpace (coordinates, value) ->
+      empty_spaces.push(coordinates) unless value?
+
+    return empty_spaces
 
   # TODO: determine optimal move, rather than random
   getMove: ->
@@ -125,14 +142,8 @@ class Game
   boardToString: ->
     spaces = []
 
-    # TODO: replace with a space iterator utility method
-    for row, row_index in @board
-      for column, column_index in row
-        space = @getValue [row_index, column_index]
-
-        space = ' ' unless space?
-
-        spaces.push space
+    @eachSpace (coords, value) ->
+      spaces.push value or ' '
 
     return ("""
       +---+---+---+
