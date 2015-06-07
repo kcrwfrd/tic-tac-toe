@@ -24,6 +24,17 @@ class Game
 
     @current_player = 'x'
 
+  getEmptySpaces: ->
+    spaces = []
+
+    for row, row_index in @board
+      for column, column_index in row
+        space = [row_index, column_index]
+
+        spaces.push space unless @getValue(space)?
+
+    return spaces
+
   getValue: ([row, column]) ->
     return @board[row][column]
 
