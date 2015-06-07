@@ -24,6 +24,8 @@ class Game
 
     @current_player = 'x'
 
+    @play()
+
   getEmptySpaces: ->
     spaces = []
 
@@ -34,6 +36,14 @@ class Game
         spaces.push space unless @getValue(space)?
 
     return spaces
+
+  # TODO: determine optimal move, rather than random
+  getMove: ->
+    empty_spaces = @getEmptySpaces()
+
+    index = Math.floor(Math.random() * (empty_spaces.length))
+
+    return empty_spaces[index]
 
   getValue: ([row, column]) ->
     return @board[row][column]
@@ -102,5 +112,36 @@ class Game
 
   markSpace: ([row, column], marker) ->
     @board[row][column] = marker
+
+  nextMove: ->
+    @markSpace @getMove(), @current_player
+
+    @current_player = if @current_player is 'x' then 'o' else 'x'
+
+  play: ->
+    while not @getResult()?
+      @nextMove()
+
+  boardToString: ->
+    spaces = []
+
+    # TODO: replace with a space iterator utility method
+    for row, row_index in @board
+      for column, column_index in row
+        space = @getValue [row_index, column_index]
+
+        space = ' ' unless space?
+
+        spaces.push space
+
+    return ("""
+      +---+---+---+
+      | #{spaces[0]} | #{spaces[1]} | #{spaces[2]} |
+      +---+---+---+
+      | #{spaces[3]} | #{spaces[4]} | #{spaces[5]} |
+      +---+---+---+
+      | #{spaces[6]} | #{spaces[7]} | #{spaces[8]} |
+      +---+---+---+
+    """)
 
 module.exports = Game
