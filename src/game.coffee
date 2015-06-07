@@ -52,14 +52,6 @@ class Game
 
     return empty_spaces
 
-  # TODO: determine optimal move, rather than random
-  getMove: ->
-    empty_spaces = @getEmptySpaces()
-
-    index = Math.floor(Math.random() * (empty_spaces.length))
-
-    return empty_spaces[index]
-
   getValue: ([row, column]) ->
     return @board[row][column]
 
