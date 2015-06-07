@@ -1,9 +1,13 @@
 Game = require '../src/Game'
+Player = require '../src/player'
 game = null
+
+x = new Player 'x'
+o = new Player 'o'
 
 describe 'Game:', ->
   beforeEach ->
-    game = new Game()
+    game = new Game x, o
 
   describe 'getEmptySpaces:', ->
     it 'Should return 9 spaces on an empty board.', ->
