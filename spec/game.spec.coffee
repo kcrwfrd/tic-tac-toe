@@ -30,6 +30,16 @@ describe 'Game:', ->
 
       expect(game.getEmptySpaces().length).toBe 3
 
+  describe 'isDraw:', ->
+    it 'Should return true if the final move results in a draw.', ->
+      game.board = [
+        ['x', 'o', 'x']
+        ['o', 'o', null]
+        ['x', 'x', 'o']
+      ]
+
+      expect(game.isDraw()).toBe true
+
   describe 'getResult:', ->
     # Current player defaults to 'x'
 
