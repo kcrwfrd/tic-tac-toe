@@ -5,6 +5,27 @@ describe 'Game:', ->
   beforeEach ->
     game = new Game()
 
+  describe 'getEmptySpaces:', ->
+    it 'Should return 9 spaces on an empty board.', ->
+      game.board = [
+        [null, null, null]
+        [null, null, null]
+        [null, null, null]
+      ]
+
+      spaces = game.getEmptySpaces()
+
+      expect(spaces.length).toBe 9
+
+    it 'Should return the empty spaces on a partially-filled board.', ->
+      game.board = [
+        [null, 'x', 'o']
+        [null, 'o', null]
+        ['x', 'o', 'x']
+      ]
+
+      expect(game.getEmptySpaces().length).toBe 3
+
   describe 'getResult:', ->
     # Current player defaults to 'x'
 
