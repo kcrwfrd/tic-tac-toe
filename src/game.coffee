@@ -14,8 +14,25 @@ lines = [
   [[0, 2], [1, 1], [2, 0]]
 ]
 
+###
+@name Game
+@description
+Represents a point of state in the game--a node in the graph of possible outcomes.
+
+TODO: Rename to GameState.
+###
+
 class Game
-  constructor: (@player_a, @player_b) ->
+
+  ###
+  @name Game~constructor
+
+  @param {Player} player_a
+  @param {Player} player_b
+  @param {[Board]} board - A brand new game will omit this argument.
+  ###
+
+  constructor: (@player_a, @player_b, board = null) ->
     @board = [
       [null, null, null]
       [null, null, null]
@@ -23,6 +40,11 @@ class Game
     ]
 
     @current_player = @player_a
+
+    # We need to re-instantiate the board from its previous state
+    if board?
+      @eachSpace ([row, column], value) =>
+        @board[row][column] = board[row][column]
 
   ###
   @name eachSpace
@@ -117,6 +139,11 @@ class Game
     return 'draw' unless has_unblocked_line
     return null
 
+  duplicate: ->
+    next_player = if @current_player is @player_a then @player_b else @player_a
+
+    return new @constructor @current_player, next_player, @board
+
   markSpace: ([row, column], player) ->
     throw Error "It's not #{player.marker}'s turn!" unless player is @current_player
 
@@ -124,6 +151,8 @@ class Game
 
     @current_player =
       if @current_player is @player_a then @player_b else @player_a
+
+    return @duplicate()
 
   nextMove: ->
     @current_player.move @
