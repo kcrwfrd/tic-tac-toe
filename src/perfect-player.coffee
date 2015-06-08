@@ -1,6 +1,18 @@
 Player = require './player'
 
 class PerfectPlayer extends Player
+
+  ###
+  @name getMove
+  @description
+  Overrides base class method with minimax algorithm
+  to always choose the perfect strategy.
+
+  @param {Game} game
+
+  @returns [Row, Column]
+  ###
+
   getMove: (game) ->
     scoreGame = (game, depth) =>
       winner = game.getWinner()
