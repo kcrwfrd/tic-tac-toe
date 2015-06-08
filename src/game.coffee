@@ -140,23 +140,29 @@ class Game
     return null
 
   isDraw: ->
-    # Our recursive function will traverse the graph of possible outcomes,
-    # returning 0 if all outcomes result in a draw.
-    recurse = (game, score = 0) ->
+    possible_wins = 0
+
+    # Our recursive function will traverse the graph of possible outcomes.
+    # If there are any possible wins, then we know the game is not a draw.
+    recurse = (game) ->
       spaces = game.getEmptySpaces()
       winner = game.getWinner()
 
-      score++ if winner?
+      possible_wins++ if winner?
 
-      # Exit if no more spaces or a potential winner has been found
-      return score if spaces.length is 0 or score > 0
+      # We can exit recursion if a winner was found
+      return if possible_wins > 0
 
       for space in spaces
-        child = game.markSpace space, game.current_player
+        child = game.duplicate()
 
-        return recurse child, score
+        child.markSpace space, child.current_player
 
-    return recurse(@) is 0
+        recurse child
+
+    recurse @
+
+    return possible_wins is 0
 
   duplicate: ->
     next_player = if @current_player is @player_a then @player_b else @player_a
