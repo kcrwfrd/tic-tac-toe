@@ -18,8 +18,6 @@ lines = [
 @name Game
 @description
 Represents a point of state in the game--a node in the graph of possible outcomes.
-
-TODO: Rename to GameState.
 ###
 
 class Game
@@ -66,6 +64,14 @@ class Game
 
         callback? coordinates, value
 
+  ###
+  @name getEmptySpaces
+  @description
+  Returns coordinates for empty spaces.
+
+  @returns {Array} - Array of coordinates [Row, Column]
+  ###
+
   getEmptySpaces: ->
     empty_spaces = []
 
@@ -74,8 +80,27 @@ class Game
 
     return empty_spaces
 
+  ###
+  @name getValue
+  @description
+  Returns the value at a particular coordinate
+
+  @param {[Row, Column]}
+
+  @returns {String|null} - 'x', 'o', or null
+  ###
+
   getValue: ([row, column]) ->
     return @board[row][column]
+
+
+  ###
+  @name getWinner
+  @description
+  Returns the winning marker, or null if no winner found.
+
+  @returns {String|null} - 'x', 'o', or null
+  ###
 
   getWinner: ->
     winner = null
@@ -98,9 +123,14 @@ class Game
 
     return winner
 
-  # TODO: this does not take into consideration the next player's move
-  # We'll need to implement a recursive algorithm (minimax) to fully take
-  # into account all possible scenarios.
+  ###
+  @name getResult
+  @description
+  Returns the game result, or null if game unfinished.
+
+  @returns {String|null} - 'draw', 'x', 'o', or null
+  ###
+
   getResult: ->
     # If all spaces in line are the same value,
     # we can determine a winner.
@@ -109,6 +139,17 @@ class Game
     return winner if winner?
     return 'draw' if @isDraw()
     return null
+
+  ###
+  @name isDraw
+  @description
+  Traverses game tree from the current state to determine
+  a draw as soon as possible, so we don't needlessly fill up the board.
+
+  TODO: optimize
+
+  @returns {Boolean}
+  ###
 
   isDraw: ->
     possible_wins = 0
@@ -135,10 +176,25 @@ class Game
 
     return possible_wins is 0
 
+  ###
+  @name duplicate
+  @description
+  Returns a new instance of Game with the same state.
+  This let's us traverse the game tree in `isDraw` and with Player's minimax
+  algorithm so that we may evaluate state at each point in the tree.
+  ###
+
   duplicate: ->
     next_player = if @current_player is @player_a then @player_b else @player_a
 
     return new @constructor @current_player, next_player, @board
+
+  ###
+  @name markSpace
+  @description
+  Marks a space on the board with player's marker,
+  and sets current_player to next.
+  ###
 
   markSpace: ([row, column], player) ->
     throw Error "It's not #{player.marker}'s turn!" unless player is @current_player
@@ -150,16 +206,42 @@ class Game
 
     return @duplicate()
 
+  ###
+  @name nextMove
+  @description
+  Calls on the current player to make their move.
+  ###
+
   nextMove: ->
     @current_player.move @
+
+  ###
+  @name play
+  @description
+  Automates play between two computers until a result is determined.
+
+  Since `getResult()` calls on `isDraw()`, which is a
+  recursive tree traversal method, this gets very expensive.
+
+  TODO: refactor
+  ###
 
   play: ->
     while not @getResult()?
       @nextMove()
 
+  ###
+  @name boardToString
+  @description
+  Returns a string representation of the current board state.
+
+  @returns {String}
+  ###
+
   boardToString: ->
     spaces = []
 
+    # We want a single space instead of `null` for printing empty spaces.
     @eachSpace (coords, value) ->
       spaces.push value or ' '
 
