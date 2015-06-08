@@ -13,8 +13,13 @@ score_board =
 
 start_time = new Date()
 
+# First player has the advantage, so let's switch each turn
+player_order = [x, o]
+
 while score_board.x < 10 and score_board.o < 10
-  game = new Game x, o
+  player_order.reverse()
+
+  game = new Game player_order[0], player_order[1]
 
   game.play()
   games.push game
