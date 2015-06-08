@@ -204,8 +204,6 @@ class Game
     @current_player =
       if @current_player is @player_a then @player_b else @player_a
 
-    return @duplicate()
-
   ###
   @name nextMove
   @description
