@@ -5,6 +5,14 @@ A full board should never be printed unless the final move is a game-winning mov
 
 The program should run until X or O has won 10 games, and then finally output the amount of time it took to run the simulation.
 
+# The Implementation
+I solved this with the following modules:
+
+* `Game` represents the state of a game
+* `Player` randomly chooses its moves
+* `PerfectPlayer` extends `Player` with a minimax algorithm to play with perfect strategy
+* `index.coffee` orchestrates the simulation
+
 # Getting Started
 
 ```bash
