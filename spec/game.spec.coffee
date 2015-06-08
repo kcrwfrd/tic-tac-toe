@@ -77,6 +77,15 @@ describe 'Game:', ->
 
       expect(game.isDraw()).toBe false
 
+    it 'Should return false if the game is not yet a draw.', ->
+      game.board = [
+        ['o', 'x', 'o']
+        [null, 'x', null]
+        ['x', 'o', null]
+      ]
+
+      expect(game.isDraw()).toBe false
+
   describe 'getResult:', ->
     # Current player defaults to 'x'
 
@@ -97,7 +106,7 @@ describe 'Game:', ->
           ['x', 'x', 'o']
         ]
 
-        game.current_player = 'o'
+        game.current_player = o
 
         expect(game.getResult()).toBe null
 
@@ -188,19 +197,19 @@ describe 'Game:', ->
         expect(game.getResult()).toBe null
 
       it 'Should return null for an unfinished game.', ->
-        unfinished_boards = [
-          [
-            ['o', 'x', 'o']
-            [null, 'x', null]
-            ['x', 'o', null]
-          ], [
-            ['x', null, null]
-            ['o', null, null]
-            ['x', null, 'o']
-          ]
+        game.board = [
+          ['o', 'x', 'o']
+          [null, 'x', null]
+          ['x', 'o', null]
         ]
 
-        for board in unfinished_boards
-          game.board = board
+        expect(game.getResult()).toBe null
 
-          expect(game.getResult()).toBe null
+      it 'Should return null for an obviously unfinished game.', ->
+        game.board = [
+          ['x', null, null]
+          ['o', null, null]
+          ['x', null, 'o']
+        ]
+
+        expect(game.getResult()).toBe null
