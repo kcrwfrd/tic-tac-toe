@@ -1,7 +1,17 @@
 Game = require './game'
 Player = require './player'
+PerfectPlayer = require './perfect-player'
 
-x = new Player 'x'
+# `npm start -- --perfect`
+use_perfect = process.argv.slice(2)[0] is '--perfect'
+
+if use_perfect
+  console.log 'X chooses the perfect strategy!'
+  x = new PerfectPlayer 'x'
+
+else
+  x = new Player 'x'
+
 o = new Player 'o'
 
 games = []
