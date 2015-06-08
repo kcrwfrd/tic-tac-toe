@@ -30,6 +30,15 @@ describe 'PerfectPlayer:', ->
 
       expect(x.getMove(game)).toEqual [2, 2]
 
+    it 'Should return the winning move.', ->
+      game.board = [
+        ['x', 'o', null]
+        ['x', 'x', 'o']
+        ['o', 'o', null]
+      ]
+
+      expect(x.getMove(game)).toEqual [2, 2]
+
     it "Should block an opponent's branch.", ->
       game.board = [
         ['x', null, null]
@@ -37,7 +46,9 @@ describe 'PerfectPlayer:', ->
         [null, null, 'o']
       ]
 
-      expect(x.getMove(game)).toEqual [2, 1]
+      expect(x.getMove(game)).toEqual [0, 2]
+      # [2, 1] would also attempt to block a branch.
+      # Our AI picks the first choice when they are weighted the same.
 
     it "Should block an opponent's win.", ->
       game.board = [
@@ -61,7 +72,7 @@ describe 'PerfectPlayer:', ->
       game.board = [
         [null, null, 'x']
         [null, 'x', 'o']
-        ['o', null, ]
+        ['o', null, null]
       ]
 
-      expect(x.getMove(game)).toEqual [0, 1]
+      expect(x.getMove(game)).toEqual [0, 0]
