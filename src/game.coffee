@@ -104,39 +104,10 @@ class Game
   getResult: ->
     # If all spaces in line are the same value,
     # we can determine a winner.
-    winner = null
-
-    has_unblocked_line = false
-
-    for line in lines
-      # If a line is unblocked, the game is not yet a draw
-      blocked = false
-
-      first_found_value = null
-      matching_value_count = 0
-
-      for space in line
-        value = @getValue space
-
-        if value? and not first_found_value?
-          first_found_value = value
-          matching_value_count++
-
-        else if value? and first_found_value?
-          if value is first_found_value
-            matching_value_count++
-          else
-            blocked = true
-
-      if matching_value_count is 3
-        winner = first_found_value
-        break
-
-      else if not blocked
-        has_unblocked_line = true
+    winner = @getWinner()
 
     return winner if winner?
-    return 'draw' unless has_unblocked_line
+    return 'draw' if @isDraw()
     return null
 
   isDraw: ->
