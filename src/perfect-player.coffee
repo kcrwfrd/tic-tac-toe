@@ -23,46 +23,35 @@ class PerfectPlayer extends Player
       if game.getWinner()? or empty_spaces.length is 0
         return score: scoreGame(game, depth)
 
-      if game.current_player.marker is @marker
-        best_score = Number.NEGATIVE_INFINITY
-        best_space = [-1, -1]
+      best_score =
+        if game.current_player.marker is @marker
+          Number.NEGATIVE_INFINITY
+        else
+          Number.POSITIVE_INFINITY
 
-        for space in empty_spaces
-          child = game.duplicate()
-          child.markSpace space, child.current_player
+      best_space = null
 
-          score = minimax(child, depth + 1).score
+      for space in empty_spaces
+        child = game.duplicate()
+        child.markSpace space, child.current_player
 
+        score = minimax(child, depth + 1).score
+
+        if game.current_player.marker is @marker
           if score > best_score
             best_score = score
             best_space = space
 
-        return {
-          score: best_score
-          space: best_space
-        }
-
-      else
-        best_score = Number.POSITIVE_INFINITY
-        best_space = [-1, -1]
-
-        for space in empty_spaces
-          child = game.duplicate()
-          child.markSpace space, child.current_player
-
-          score = minimax(child, depth + 1).score
-
+        else
           if score < best_score
             best_score = score
             best_space = space
 
-        return {
-          score: best_score
-          space: best_space
-        }
+      return {
+        score: best_score
+        space: best_space
+      }
 
-    result = minimax game, 0
-
-    return result.space
+    return minimax(game, 0).space
 
 module.exports = PerfectPlayer
