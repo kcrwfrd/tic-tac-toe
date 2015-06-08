@@ -14,8 +14,25 @@ lines = [
   [[0, 2], [1, 1], [2, 0]]
 ]
 
+###
+@name Game
+@description
+Represents a point of state in the game--a node in the graph of possible outcomes.
+
+TODO: Rename to GameState.
+###
+
 class Game
-  constructor: (@player_a, @player_b) ->
+
+  ###
+  @name Game~constructor
+
+  @param {Player} player_a
+  @param {Player} player_b
+  @param {[Board]} board - A brand new game will omit this argument.
+  ###
+
+  constructor: (@player_a, @player_b, board = null) ->
     @board = [
       [null, null, null]
       [null, null, null]
@@ -23,6 +40,11 @@ class Game
     ]
 
     @current_player = @player_a
+
+    # We need to re-instantiate the board from its previous state
+    if board?
+      @eachSpace ([row, column], value) =>
+        @board[row][column] = board[row][column]
 
   ###
   @name eachSpace
@@ -82,40 +104,41 @@ class Game
   getResult: ->
     # If all spaces in line are the same value,
     # we can determine a winner.
-    winner = null
-
-    has_unblocked_line = false
-
-    for line in lines
-      # If a line is unblocked, the game is not yet a draw
-      blocked = false
-
-      first_found_value = null
-      matching_value_count = 0
-
-      for space in line
-        value = @getValue space
-
-        if value? and not first_found_value?
-          first_found_value = value
-          matching_value_count++
-
-        else if value? and first_found_value?
-          if value is first_found_value
-            matching_value_count++
-          else
-            blocked = true
-
-      if matching_value_count is 3
-        winner = first_found_value
-        break
-
-      else if not blocked
-        has_unblocked_line = true
+    winner = @getWinner()
 
     return winner if winner?
-    return 'draw' unless has_unblocked_line
+    return 'draw' if @isDraw()
     return null
+
+  isDraw: ->
+    possible_wins = 0
+
+    # Our recursive function will traverse the graph of possible outcomes.
+    # If there are any possible wins, then we know the game is not a draw.
+    recurse = (game) ->
+      spaces = game.getEmptySpaces()
+      winner = game.getWinner()
+
+      possible_wins++ if winner?
+
+      # We can exit recursion if a winner was found
+      return if possible_wins > 0
+
+      for space in spaces
+        child = game.duplicate()
+
+        child.markSpace space, child.current_player
+
+        recurse child
+
+    recurse @
+
+    return possible_wins is 0
+
+  duplicate: ->
+    next_player = if @current_player is @player_a then @player_b else @player_a
+
+    return new @constructor @current_player, next_player, @board
 
   markSpace: ([row, column], player) ->
     throw Error "It's not #{player.marker}'s turn!" unless player is @current_player
@@ -124,6 +147,8 @@ class Game
 
     @current_player =
       if @current_player is @player_a then @player_b else @player_a
+
+    return @duplicate()
 
   nextMove: ->
     @current_player.move @

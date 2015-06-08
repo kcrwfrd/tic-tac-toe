@@ -1,9 +1,13 @@
 Game = require '../src/Game'
+Player = require '../src/player'
 game = null
+
+x = new Player 'x'
+o = new Player 'o'
 
 describe 'Game:', ->
   beforeEach ->
-    game = new Game()
+    game = new Game x, o
 
   describe 'getEmptySpaces:', ->
     it 'Should return 9 spaces on an empty board.', ->
@@ -26,6 +30,62 @@ describe 'Game:', ->
 
       expect(game.getEmptySpaces().length).toBe 3
 
+  describe 'isDraw:', ->
+    it 'Should return true if the final move results in a draw.', ->
+      game.board = [
+        ['x', 'o', 'x']
+        ['o', 'o', null]
+        ['x', 'x', 'o']
+      ]
+
+      expect(game.isDraw()).toBe true
+
+    it 'Should return false if the final move can win the game.', ->
+      game.board = [
+        ['x', 'o', 'x']
+        ['o', 'o', null]
+        ['x', 'x', 'o']
+      ]
+
+      game.current_player = o
+
+      expect(game.isDraw()).toBe false
+
+    it 'Should return true if both branches result in a draw.', ->
+      game.board = [
+        [null, 'x', 'o']
+        [null, 'o', 'x']
+        ['x', 'o', 'x']
+      ]
+
+      expect(game.isDraw()).toBe true
+
+      game.board = [
+        ['o', 'x', 'o']
+        [null, 'x', null]
+        ['x', 'o', 'x']
+      ]
+
+      expect(game.isDraw()).toBe true
+
+    it 'Should return false if the outcome is hopeless for current player.', ->
+      game.board = [
+        [null, null, 'x']
+        ['x', 'o', 'x']
+        [null, 'o', 'o']
+      ]
+
+      expect(game.isDraw()).toBe false
+
+    it 'Should return false if the game is not yet a draw.', ->
+      game.board = [
+        ['o', 'x', 'o']
+        [null, 'x', null]
+        ['x', 'o', null]
+      ]
+
+      expect(game.isDraw()).toBe false
+
   describe 'getResult:', ->
     # Current player defaults to 'x'
 
@@ -46,7 +106,7 @@ describe 'Game:', ->
           ['x', 'x', 'o']
         ]
 
-        game.current_player = 'o'
+        game.current_player = o
 
         expect(game.getResult()).toBe null
 
@@ -137,19 +197,19 @@ describe 'Game:', ->
         expect(game.getResult()).toBe null
 
       it 'Should return null for an unfinished game.', ->
-        unfinished_boards = [
-          [
-            ['o', 'x', 'o']
-            [null, 'x', null]
-            ['x', 'o', null]
-          ], [
-            ['x', null, null]
-            ['o', null, null]
-            ['x', null, 'o']
-          ]
+        game.board = [
+          ['o', 'x', 'o']
+          [null, 'x', null]
+          ['x', 'o', null]
         ]
 
-        for board in unfinished_boards
-          game.board = board
+        expect(game.getResult()).toBe null
 
-          expect(game.getResult()).toBe null
+      it 'Should return null for an obviously unfinished game.', ->
+        game.board = [
+          ['x', null, null]
+          ['o', null, null]
+          ['x', null, 'o']
+        ]
+
+        expect(game.getResult()).toBe null
