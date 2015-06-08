@@ -2,9 +2,7 @@ Player = require './player'
 
 class PerfectPlayer extends Player
   getMove: (game) ->
-    choice = null
-
-    score = (game, depth) =>
+    scoreGame = (game, depth) =>
       winner = game.getWinner()
 
       # I win
@@ -19,44 +17,52 @@ class PerfectPlayer extends Player
       else
         return 0
 
-    minimax = (game, depth, maximizing_player) =>
-      return score(game, depth) if game.getResult()?
-
+    minimax = (game, depth) =>
       empty_spaces = game.getEmptySpaces()
 
-      for space in empty_spaces
-        child = game.duplicate()
+      if game.getWinner()? or empty_spaces.length is 0
+        return score: scoreGame(game, depth)
 
-        child.markSpace space, child.current_player
+      if game.current_player.marker is @marker
+        best_score = Number.NEGATIVE_INFINITY
+        best_space = [-1, -1]
 
-        if maximizing_player
-          best_value = Number.NEGATIVE_INFINITY
-          value = minimax child, depth + 1, false
+        for space in empty_spaces
+          child = game.duplicate()
+          child.markSpace space, child.current_player
 
-          if value > best_value
-            best_value = value
+          score = minimax(child, depth + 1).score
 
-            choice =
-              move: space
-              value: value
+          if score > best_score
+            best_score = score
+            best_space = space
 
-          return best_value
+        return {
+          score: best_score
+          space: best_space
+        }
 
-        else
-          best_value = Number.POSITIVE_INFINITY
-          value = minimax child, depth + 1, true
+      else
+        best_score = Number.POSITIVE_INFINITY
+        best_space = [-1, -1]
 
-          if value < best_value
-            best_value = value
+        for space in empty_spaces
+          child = game.duplicate()
+          child.markSpace space, child.current_player
 
-            choice =
-              move: space
-              value: value
+          score = minimax(child, depth + 1).score
 
-          return best_value
+          if score < best_score
+            best_score = score
+            best_space = space
 
-    minimax game, 0, true
+        return {
+          score: best_score
+          space: best_space
+        }
 
-    return choice.move
+    result = minimax game, 0
+
+    return result.space
 
 module.exports = PerfectPlayer
