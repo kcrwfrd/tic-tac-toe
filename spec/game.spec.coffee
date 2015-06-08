@@ -40,6 +40,43 @@ describe 'Game:', ->
 
       expect(game.isDraw()).toBe true
 
+    it 'Should return false if the final move can win the game.', ->
+      game.board = [
+        ['x', 'o', 'x']
+        ['o', 'o', null]
+        ['x', 'x', 'o']
+      ]
+
+      game.current_player = o
+
+      expect(game.isDraw()).toBe false
+
+    it 'Should return true if both branches result in a draw.', ->
+      game.board = [
+        [null, 'x', 'o']
+        [null, 'o', 'x']
+        ['x', 'o', 'x']
+      ]
+
+      expect(game.isDraw()).toBe true
+
+      game.board = [
+        ['o', 'x', 'o']
+        [null, 'x', null]
+        ['x', 'o', 'x']
+      ]
+
+      expect(game.isDraw()).toBe true
+
+    it 'Should return false if the outcome is hopeless for current player.', ->
+      game.board = [
+        [null, null, 'x']
+        ['x', 'o', 'x']
+        [null, 'o', 'o']
+      ]
+
+      expect(game.isDraw()).toBe false
+
   describe 'getResult:', ->
     # Current player defaults to 'x'
 
